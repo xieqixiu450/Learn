@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <div class="test"></div>
+</head>
+<body>
+    <script>
+        const obj = {
+            name: 'lili',
+            age: 12,
+            gender: '男',
+        }
+        //defineProperty实现响应式
+        // const keys = Object.keys(obj);
+        // for (const key of keys) {
+        //     let value = obj[key];
+        //     Object.defineProperty(obj, key, {
+        //         set: function (newValue) {
+        //             console.log(`更新了${key}的值`);
+        //             value = newValue;
+        //         },
+        //         get: function () {
+        //             console.log(`获取了${key}的值`);
+        //             return value;
+        //         }
+        //     })
+        // }
+        // const test = document.querySelector('.test');
+        // test.textContent = obj.name;
+        // console.log(obj.name);
+        // obj.name = 'haha';
+        // console.log(obj.name);
+
+        //proxy实现响应式
+        const objProxy=new Proxy(obj,{
+            get:function(target,key){
+                console.log(`获取了${key}的值`)
+                return target[key];
+            },
+            set:function(target,key,value){
+                console.log(`更改了${key}的值为${value}`);
+                target[key]=value;
+            }
+        })
+
+        const test=document.querySelector('.test');
+        test.textContent=objProxy.name;
+        console.log(objProxy.name);
+        objProxy.name = 'haha';
+        console.log(objProxy.name);
+        objProxy.score=99;
+
+    </script>
+</body>
+</html>
