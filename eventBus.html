@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button>按钮</button>
+    <script>
+        class myEventBus{
+            constructor(){
+                this.eventMap={};
+            }
+            on(eventName,eventFn){
+                let eventItem=this.eventMap[eventName];
+                if(!eventItem){
+                    eventItem=[];
+                    this.eventMap[eventName]=eventItem;
+                }
+                eventItem.push(eventFn);
+            }
+            emit(eventName,...args){
+                let eventItem=this.eventMap[eventName];
+                if(!eventItem) return;
+                eventItem.forEach(fn => {
+                    fn(...args);
+                });
+            }
+            off(eventName,eventFn){
+                let eventItem=this.eventMap[eventName];
+                if(!eventItem) return;
+                for(let i=0;i<eventItem.length;i++){
+                    if(eventItem[i]==eventFn){
+                        eventItem.splice(i, 1);
+                        break;
+                    }
+                }
+                if(eventItem.length==0){
+                    delete this.eventMap[eventName];
+                }
+            }
+        }
+        const eventBus=new myEventBus();
+        eventBus.on('click',()=>{
+            console.log('click');
+        })
+        eventBus.on('click',()=>{
+            console.log('hello');
+        })
+        const button=document.querySelector('button');
+        button.onclick=function(){
+            eventBus.emit('click');
+        }
+    </script>
+</body>
+</html>

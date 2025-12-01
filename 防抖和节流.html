@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input>
+    <button>按钮</button>
+    <script>
+        function myDebounce(fn,delay,immediate=false){
+            let timer=null;
+            let isInvoke=false;
+            const _debounce=function(...args){
+                if(timer) clearTimeout(timer);
+                //首次立即执行
+                if(immediate&&!isInvoke){
+                    fn.apply(this,args);
+                    isInvoke=true;
+                    return;
+                }
+                timer=setTimeout(()=>{
+                    fn.apply(this,args);
+                    timer=null;
+                    isInvoke=false;
+                },delay)
+            }
+            //取消功能
+            _debounce.cancel=function(){
+                if(timer) clearTimeout(timer);
+                timer = null;
+                isInvoke = false;
+            }
+            return _debounce;
+        }
+
+        function myThrottle(fn,interval){
+            let start=0;
+            const _throttle=function(){
+                let now=new Date().getTime();
+                if(now-start>=interval){
+                    fn();
+                    start=now;
+                }
+            }
+            return _throttle;
+        }
+
+        let count=1;
+        function inputFn(){
+            console.log(`第${count++}次运行:`,this.value);
+        }
+        const inputEl=document.querySelector("input");
+        inputEl.oninput=myDebounce(inputFn,2000);
+
+        let num=1;
+        function clickFn(){
+            console.log(`第${num++}次点击`);
+        }
+        const buttonEl=document.querySelector("button");
+        buttonEl.onclick=myThrottle(clickFn,2000);
+    </script>
+</body>
+</html>
